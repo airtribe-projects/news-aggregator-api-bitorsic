@@ -8,6 +8,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/users', require('./routes/usersRoute'));
+app.use('/news', require('./routes/newsRoute'));
 
 (async () => {
 	try {

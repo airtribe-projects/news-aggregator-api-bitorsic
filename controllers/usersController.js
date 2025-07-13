@@ -58,8 +58,45 @@ exports.login = async (req, res) => {
       id: user._id,
       token,
     })
-  } catch (e) {
-    console.error(e);
-    res.status(500).send({ message: e.message });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: err.message });
+  }
+};
+
+exports.getPreferences = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.id);
+    if (!user) {
+      return res.status(404).send({ message: `User not found`});
+    }
+
+    res.status(200).send({ preferences: user.preferences });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: err.message });
+  }
+};
+
+exports.putPreferences = async (req, res) => {
+  try {
+    const { preferences } = req.body;
+
+    if (!Array.isArray(preferences)) {
+      return res.status(400).send({ message: `preferences field must be an array`});
+    }
+
+    const user = await userModel.findById(req.user.id);
+    if (!user) {
+      return res.status(404).send({ message: `User not found`});
+    }
+
+    user.preferences = preferences;
+    await user.save();
+
+    res.status(200).send({ message: `Preferences successfully updated` });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: err.message });
   }
 };
